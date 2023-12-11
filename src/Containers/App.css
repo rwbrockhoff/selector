@@ -1,0 +1,24 @@
+header {
+    font-family: "Silkscreen";
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 30vh;
+    background: rgb(14,124,123);
+    background: linear-gradient(0deg, rgba(14,124,123,1) 2%, rgba(0,201,200,1) 100%);
+}
+
+.title {
+    color: white;
+    text-align: center;
+}
+
+@media only screen and (max-width: 600px){
+    header {
+        padding-bottom: 100px;
+    }
+    .title {
+        font-size: 60px;
+    }
+}
