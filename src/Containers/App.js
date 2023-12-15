@@ -1,4 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { setSearchField, requestRobots } from "../actions/searchRobots";
 import "../index.css";
 import "./App.css";
 import CardList from "../Components/CardList";
@@ -6,39 +8,39 @@ import SearchBox from "../Components/SearchBox";
 import Scroll from "../Components/Scroll";
 import ErrorBoundary from "../Components/ErrorBoundary";
 
+const mapStateToProps = (state) => ({
+  searchField: state.searchRobots.searchField,
+  robots: state.requestRobots.robots,
+  isPending: state.requestRobots.isPending,
+  error: state.requestRobots.error,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
+  onRequestRobots: () => dispatch(requestRobots()),
+});
+
 class App extends Component {
-  constructor(){
-    super()
-    this.state = {
-      robots: [],
-      inputSearch: ""
-    }
+  componentDidMount() {
+    this.props.onRequestRobots();
   }
 
-  componentDidMount(){
-    fetch("https://jsonplaceholder.typicode.com/users")
-    .then(response => response.json())
-    .then(users => this.setState({robots: users}))
-  }
-
-  onSearchChange = event => {
-    this.setState({inputSearch: event.target.value})
-  }
-
-  render(){
-    const {inputSearch, robots} = this.state;
-    const filteredRobots = robots.filter(robot => {
-      return robot.name.toLowerCase().includes(inputSearch.toLowerCase());
-    })
-    return (
+  render() {
+    const { searchField, onSearchChange, robots, isPending } = this.props;
+    const filteredRobots = robots.filter((robot) => {
+      return robot.name.toLowerCase().includes(searchField.toLowerCase());
+    });
+    return isPending ? (
+      <p>Loading...</p>
+    ) : (
       <div className="App">
         <header>
           <h1 className="title">Robot Search</h1>
-          <SearchBox onSearchChange={this.onSearchChange}/>
+          <SearchBox onSearchChange={onSearchChange} />
         </header>
         <Scroll>
           <ErrorBoundary>
-            <CardList robots={filteredRobots}/>
+            <CardList robots={filteredRobots} />
           </ErrorBoundary>
         </Scroll>
       </div>
@@ -46,4 +48,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
